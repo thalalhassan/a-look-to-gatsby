@@ -1,32 +1,52 @@
-import { graphql } from "gatsby";
 import * as React from "react";
+import { Link, graphql } from "gatsby";
+import Layout from "../components/layout";
 
-// styles
-const pageStyles = {
-  color: "#00000",
-  padding: 96,
-  fontFamily: "-apple-system, Roboto, sans-serif, serif",
-};
+const BlogIndex = ({ data, location }) => {
+  const siteTitle = data.site.siteMetadata?.title || `Title`;
+  const posts = data.allContentfulBlog.edges;
 
-// markup
-const IndexPage = (props) => {
-  const {data} = props;
   return (
-    <main style={pageStyles}>
-      <title>Home Page</title>
-      <p>{JSON.stringify(data)}</p>
-    </main>
+    <Layout location={location} title={siteTitle}>
+      <p>Contentful Datas</p>
+      <ol style={{ listStyle: `none` }}>
+        {posts.map(({ node: { tittle, slug } }) => {
+          return (
+            <li key={tittle}>
+              <Link to={slug}>{tittle}</Link>
+            </li>
+          );
+        })}
+      </ol>
+      <p>Local Page Routes</p>
+      <ol style={{ listStyle: `none` }}>
+        <li key="testRoute">
+          <Link to="testRoute">test route</Link>
+        </li>
+        <li key="testRoute_test">
+          <Link to="testRoute/test">{"test route > test"}</Link>
+        </li>
+      </ol>
+    </Layout>
   );
 };
 
-export default IndexPage;
+export default BlogIndex;
 
-export const query = graphql`
-query pageQuery {
-  site {
-    siteMetadata {
-      title
+export const pageQuery = graphql`
+  query {
+    site {
+      siteMetadata {
+        title
+      }
+    }
+    allContentfulBlog {
+      edges {
+        node {
+          tittle
+          slug
+        }
+      }
     }
   }
-}
 `;
